@@ -1,4 +1,5 @@
 name: Build Android APK
+
 on:
   push:
     branches:
@@ -8,16 +9,20 @@ jobs:
   expo-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
 
-      - name: Install expo-cli
-        run: npm install -g expo-cli
+      - run: npm install -g expo-cli
+
+      - name: Debug: whoami & version
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          expo whoami
+          expo --version
 
       - name: Authenticate with Expo
         env:
@@ -29,8 +34,7 @@ jobs:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: expo build:android -t apk --non-interactive
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v4
         with:
           name: android-apk
           path: '*.apk'
