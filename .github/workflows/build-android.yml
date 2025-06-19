@@ -1,7 +1,4 @@
-.github/workflows/build-android.yml
-
 name: Build Android APK
-
 on:
   push:
     branches:
@@ -10,12 +7,11 @@ on:
 jobs:
   expo-build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Install Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '18'
@@ -26,22 +22,15 @@ jobs:
       - name: Authenticate with Expo
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          expo login --token $EXPO_TOKEN
+        run: expo login --token $EXPO_TOKEN
 
       - name: Start Expo build (Android APK)
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          expo build:android -t apk --non-interactive
+        run: expo build:android -t apk --non-interactive
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: android-apk
-          path: |
-            *.apk
-
-      - name: Show download link
-        run: echo "APK artifact is available in Actions artifacts or via Expo dashboard."
-
+          path: '*.apk'
